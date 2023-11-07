@@ -97,5 +97,9 @@ app.post("/contact", async (req, res) => {
   }
 });
 
+app.get("/test", (req,res) =>{
+  res.send("API is running");
+});
+
 const PORT = 5000;
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
