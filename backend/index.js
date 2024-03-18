@@ -9,33 +9,58 @@ const fs = require("fs");
 const app = express();
 const upload = multer({ dest: "uploads/" });
 
-app.use(cors());
 app.use(express.json());
+
+// Configure the CORS for whitelisted domains.
+const allowedOrigins = process.env.WHITELISTED_DOMAINS;
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Check if the origin is allowed
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS -> " + origin));
+    }
+  },
+  methods: "POST,GET",
+  credentials: true, // Enable credentials (if needed)
+  optionsSuccessStatus: 204, // Respond with a 204 status for preflight requests
+};
+
+// Apply CORS middleware globally to all routes
+app.use((req, res, next) => {
+  const excludeRoutes = ["/test"]; // You can include routes that don't use Whitelisted domains.
+  if (excludeRoutes.includes(req.path)) {
+    cors()(req, res, next);
+  } else {
+    cors(corsOptions)(req, res, next);
+  }
+});
 
 app.post("/upload", upload.single("file"), async (req, res) => {
   try {
     const { subject, email, description } = req.body;
 
     const mailOptions = {
-      from: 'Mail sender Bot',
+      from: "Mail sender Bot",
       to: email,
       subject: subject,
       text: description,
     };
 
     if (req.file) {
-      console.log('File received:', req.file);
+      console.log("File received:", req.file);
       const { originalname, filename } = req.file;
       mailOptions.attachments = [
         {
           filename: originalname,
-          path: path.join('uploads', filename),
+          path: path.join("uploads", filename),
         },
       ];
     }
 
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      service: "gmail",
       auth: {
         user: process.env.EMAIL,
         pass: process.env.PASSWORD,
@@ -75,11 +100,11 @@ app.post("/contact", async (req, res) => {
       from: process.env.EMAIL,
       to: "hello@dsourav.com",
       subject: name,
-      text:email + "\n\n" + message,
+      text: email + "\n\n" + message,
     };
 
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      service: "gmail",
       auth: {
         user: process.env.EMAIL,
         pass: process.env.PASSWORD,
@@ -88,16 +113,15 @@ app.post("/contact", async (req, res) => {
 
     const info = await transporter.sendMail(mailOptions);
 
-    console.log('Email sent:', info.response);
-    res.status(200).json({ message: 'Email sent successfully' });
-    
+    console.log("Email sent:", info.response);
+    res.status(200).json({ message: "Email sent successfully" });
   } catch (error) {
     console.error("Error:", error);
     res.status(500).send("An error occurred");
   }
 });
 
-app.get("/test", (req,res) =>{
+app.get("/test", (req, res) => {
   res.send("API is running");
 });
 
