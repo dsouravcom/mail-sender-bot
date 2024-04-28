@@ -5,6 +5,7 @@ const multer = require("multer");
 const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
+const logger = require ("./logger.js");
 
 const app = express();
 const upload = multer({ dest: "uploads/" });
@@ -69,10 +70,10 @@ app.post("/upload", upload.single("file"), async (req, res) => {
 
     transporter.sendMail(mailOptions, async (error, info) => {
       if (error) {
-        console.error("Error sending email:", error);
+        logger.error("Error sending email:", error);
         res.status(500).send("Error sending email");
       } else {
-        console.log("Email sent:", info.response);
+        logger.info("Email sent:", info.response);
         res.status(200).send("Email sent successfully");
       }
 
@@ -80,14 +81,14 @@ app.post("/upload", upload.single("file"), async (req, res) => {
         const filePath = path.join("uploads", req.file.filename);
         try {
           await fs.promises.unlink(filePath);
-          console.log("File deleted:", filePath);
+          logger.info("File deleted:", filePath);
         } catch (error) {
-          console.error("Error deleting file:", error);
+          logger.error("Error deleting file:", error);
         }
       }
     });
   } catch (error) {
-    console.error("Error:", error);
+    logger.error("Error:", error);
     res.status(500).send("An error occurred");
   }
 });
@@ -113,10 +114,10 @@ app.post("/contact", async (req, res) => {
 
     const info = await transporter.sendMail(mailOptions);
 
-    console.log("Email sent:", info.response);
+    logger.info("Email sent:", info.response);
     res.status(200).json({ message: "Email sent successfully" });
   } catch (error) {
-    console.error("Error:", error);
+    logger.error("Error:", error);
     res.status(500).send("An error occurred");
   }
 });
