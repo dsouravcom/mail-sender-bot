@@ -112,8 +112,8 @@ app.post("/contact", async (req, res) => {
       },
       debug: true, // Enables detailed debug output
       logger: true, // Logs more details to the console
-      socketTimeout: 10000, // Timeout for the socket (in milliseconds)
-      connectionTimeout: 10000, // Timeout for the connection (in milliseconds)
+      socketTimeout: 20000, // Timeout for the socket (in milliseconds)
+      connectionTimeout: 20000, // Timeout for the connection (in milliseconds)
     });
 
     const info = await transporter.sendMail(mailOptions);
