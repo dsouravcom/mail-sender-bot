@@ -61,7 +61,9 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     }
 
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false, // use false for STARTTLS; true for SSL on port 465
       auth: {
         user: process.env.EMAIL,
         pass: process.env.PASSWORD,
@@ -105,15 +107,13 @@ app.post("/contact", async (req, res) => {
     };
 
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false, // use false for STARTTLS; true for SSL on port 465
       auth: {
         user: process.env.EMAIL,
         pass: process.env.PASSWORD,
       },
-      debug: true, // Enables detailed debug output
-      logger: true, // Logs more details to the console
-      socketTimeout: 20000, // Timeout for the socket (in milliseconds)
-      connectionTimeout: 20000, // Timeout for the connection (in milliseconds)
     });
 
     const info = await transporter.sendMail(mailOptions);
