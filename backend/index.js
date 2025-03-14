@@ -102,7 +102,7 @@ app.post("/contact", async (req, res) => {
     const mailOptions = {
       from: process.env.EMAIL,
       to: "hello@dsourav.com",
-      subject: "Email from - " + name + "via portfolio contact form",
+      subject: "Email from " + name + " via portfolio contact form",
       text: "Sender Email - " + email + "\n\n" + "Sender message - " + message,
     };
 
