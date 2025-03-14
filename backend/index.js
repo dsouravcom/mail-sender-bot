@@ -5,7 +5,7 @@ const multer = require("multer");
 const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
-const logger = require ("./logger.js");
+const logger = require("./logger.js");
 
 const app = express();
 const upload = multer({ dest: "uploads/" });
@@ -100,8 +100,8 @@ app.post("/contact", async (req, res) => {
     const mailOptions = {
       from: process.env.EMAIL,
       to: "hello@dsourav.com",
-      subject: name,
-      text: email + "\n\n" + message,
+      subject: "Email from - " + name + "via portfolio contact form",
+      text: "Sender Email - " + email + "\n\n" + "Sender message - " + message,
     };
 
     const transporter = nodemailer.createTransport({
@@ -110,6 +110,10 @@ app.post("/contact", async (req, res) => {
         user: process.env.EMAIL,
         pass: process.env.PASSWORD,
       },
+      debug: true, // Enables detailed debug output
+      logger: true, // Logs more details to the console
+      socketTimeout: 10000, // Timeout for the socket (in milliseconds)
+      connectionTimeout: 10000, // Timeout for the connection (in milliseconds)
     });
 
     const info = await transporter.sendMail(mailOptions);
