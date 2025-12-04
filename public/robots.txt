@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://mail-sender-bot.vercel.app/sitemap.xml
